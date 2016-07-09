@@ -1,0 +1,28 @@
+{
+  "name": "les-olibrius/git-matter",
+  "description": "A YAML Frontmatter Git & PHP based Wiki engine",
+  "minimum-stability": "dev",
+  "license": "public",
+  "authors": [
+    {
+      "name": "Maxime Baumann",
+      "email": "maxime.baumann.pro@gmail.com"
+    }
+  ],
+  "require": {
+    "php": "^5.5 || ^7.0",
+    "psr/log": "1.0.0",
+    "psr/cache": "1.0.0",
+    "gitonomy/gitlib": "^1.0",
+    "silex/silex": "~2.0",
+    "mnapoli/front-yaml": "1.5.1",
+    "symfony/yaml": "^3.1",
+    "twig/twig": "^1.24",
+    "michelf/php-markdown": "^1.6"
+  },
+  "autoload": {
+    "psr-4": {
+      "LesOlibrius\\GitMatter\\": "src"
+    }
+  }
+}
