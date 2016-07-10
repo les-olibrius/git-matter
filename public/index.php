@@ -4,6 +4,6 @@ namespace LesOlibrius\GitMatter;
 
 require '../vendor/autoload.php';
 
-$app = new GitMatterApp();
+$app = new GitMatterApp(['debug' => true]);
 
 $app->run();
