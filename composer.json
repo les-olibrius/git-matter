@@ -18,7 +18,10 @@
     "mnapoli/front-yaml": "1.5.1",
     "symfony/yaml": "^3.1",
     "twig/twig": "^1.24",
-    "michelf/php-markdown": "^1.6"
+    "michelf/php-markdown": "^1.6",
+    "symfony/security": "^3.1",
+    "symfony/translation": "^3.1",
+    "symfony/config": "^3.1"
   },
   "autoload": {
     "psr-4": {
