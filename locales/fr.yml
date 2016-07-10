@@ -1,0 +1,5 @@
+error_404_title: "404 - Page non trouvée"
+error_404_message: "Désolé, mais la page demandée n'existe pas :("
+
+error_unknown_title: "Oups..."
+error_unknown_message: "Nous sommes désolé, mais quelque chose ne s'est pas passé comme prévu. :/"

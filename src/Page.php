@@ -2,16 +2,15 @@
 
 namespace LesOlibrius\GitMatter;
 
-
-use Pimple\Container;
+use Silex\Application;
 
 class Page
 {
 
     /**
-     * @var Container;
+     * @var Application
      */
-    private $container;
+    private $app;
 
     /**
      * @var string
@@ -25,13 +24,13 @@ class Page
 
     /**
      * Page constructor.
-     * @param Container $container
+     * @param Application $app
      * @param string $path
      * @param string $mode
      */
-    public function __construct(Container $container, $path, $mode)
+    public function __construct(Application $app, $path, $mode)
     {
-        $this->container = $container;
+        $this->app = $app;
         $this->path = $path;
         $this->mode = $mode;
         $this->parsedContent = null;
@@ -45,7 +44,11 @@ class Page
         $content = file_get_contents($this->path);
         $datas = $this->parseContent($content);
 
-        return $this->container['twig']->render($this->mode . '.html.twig', $datas);
+        if (count($datas) <= 1) {
+            $this->app->abort(404, 'missing_content');
+        }
+
+        return $this->app['twig']->render($this->mode.'.html.twig', $datas);
     }
 
     /**
@@ -54,7 +57,7 @@ class Page
      */
     private function parseContent($content)
     {
-        $parser = $this->container['frontmatter'];
+        $parser = $this->app['frontmatter'];
 
         $document = $parser->parse($content);
 
