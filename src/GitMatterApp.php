@@ -2,7 +2,10 @@
 
 namespace LesOlibrius\GitMatter;
 
+use LesOlibrius\GitMatter\Providers\PageServiceProvider;
+use Mni\FrontYAML\Parser;
 use Silex\Application;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Translation\Loader\YamlFileLoader;
 
 /**
@@ -41,6 +44,11 @@ class GitMatterApp extends \Silex\Application
      */
     private $contentDirPath;
 
+    /**
+     * GitMatterApp constructor. Instanciate a new App.
+     *
+     * @param array $values The parameters or objects.
+     */
     public function __construct(array $values = array())
     {
         parent::__construct($values);
@@ -48,9 +56,13 @@ class GitMatterApp extends \Silex\Application
         $this->setPaths();
 
         $this->registerProviders();
+        $this->setServices();
         $this->setRoutes();
     }
 
+    /**
+     * Set the paths of the app.
+     */
     private function setPaths()
     {
         $this->rootPath = dirname(__DIR__);
@@ -60,6 +72,9 @@ class GitMatterApp extends \Silex\Application
         $this->contentDirPath = $this->rootPath.DIRECTORY_SEPARATOR.'content';
     }
 
+    /**
+     * Register the App providers
+     */
     private function registerProviders()
     {
         $self = $this;
@@ -102,11 +117,33 @@ class GitMatterApp extends \Silex\Application
                 'twig.path' => $this->viewsDirPath,
             )
         );
+
+        $this->register(
+            new PageServiceProvider(),
+            [
+                'page.default_mode' => 'view',
+            ]
+        );
     }
 
+    /**
+     * Set application Dependencies/Services
+     */
+    private function setServices()
+    {
+        $this['frontmatter'] = function ($c) {
+            return new Parser();
+        };
+    }
+
+    /**
+     * Set the routes of the app
+     */
     private function setRoutes()
     {
         $self = $this;
+
+        // Redirect to the current locale index
         $this->get(
             '/',
             function () use ($self) {
@@ -116,10 +153,13 @@ class GitMatterApp extends \Silex\Application
             }
         );
 
+        // Localized wiki pages
         $this->get(
             '/{_locale}/{wikiPage}',
-            function ($wikiPage) use ($self) {
-                return $wikiPage;
+            function (GitMatterApp $self, Request $request, $wikiPage) {
+                $filepath = $this->contentDirPath.DIRECTORY_SEPARATOR.$self['locale'].DIRECTORY_SEPARATOR.$wikiPage.'.yaml';
+
+                return $self['page']($filepath, $request->get('mode'));
             }
         )
             ->value('wikiPage', 'index');
