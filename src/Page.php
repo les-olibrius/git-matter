@@ -2,16 +2,15 @@
 
 namespace LesOlibrius\GitMatter;
 
-
-use Pimple\Container;
+use Silex\Application;
 
 class Page
 {
 
     /**
-     * @var Container;
+     * @var Application
      */
-    private $container;
+    private $app;
 
     /**
      * @var string
@@ -25,13 +24,13 @@ class Page
 
     /**
      * Page constructor.
-     * @param Container $container
+     * @param Application $app
      * @param string $path
      * @param string $mode
      */
-    public function __construct(Container $container, $path, $mode)
+    public function __construct(Application $app, $path, $mode)
     {
-        $this->container = $container;
+        $this->app = $app;
         $this->path = $path;
         $this->mode = $mode;
         $this->parsedContent = null;
@@ -54,7 +53,7 @@ class Page
      */
     private function parseContent($content)
     {
-        $parser = $this->container['frontmatter'];
+        $parser = $this->app['frontmatter'];
 
         $document = $parser->parse($content);
 
