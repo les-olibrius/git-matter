@@ -44,7 +44,11 @@ class Page
         $content = file_get_contents($this->path);
         $datas = $this->parseContent($content);
 
-        return $this->container['twig']->render($this->mode . '.html.twig', $datas);
+        if (count($datas) <= 1) {
+            $this->app->abort(404, 'missing_content');
+        }
+
+        return $this->app['twig']->render($this->mode.'.html.twig', $datas);
     }
 
     /**

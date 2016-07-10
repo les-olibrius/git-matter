@@ -159,10 +159,39 @@ class GitMatterApp extends \Silex\Application
             function (GitMatterApp $self, Request $request, $wikiPage) {
                 $filepath = $this->contentDirPath.DIRECTORY_SEPARATOR.$self['locale'].DIRECTORY_SEPARATOR.$wikiPage.'.yaml';
 
+                // TODO: "Create page" option and move it to PageServiceProvider
+                if (!file_exists($filepath)) {
+                    // TODO: Allow the user to create the page
+                    $self->abort(404, $self->trans('error_404_message'));
+                }
+
                 return $self['page']($filepath, $request->get('mode'));
             }
         )
             ->value('wikiPage', 'index');
+
+        $this->error(
+            function (\Exception $e, Request $request, $code) use ($self) {
+                switch ($code) {
+                    case 404:
+                        $error_title = $self->trans('error_'.$code.'_title');
+                        $error_message = $self->trans('error_'.$code.'_message');
+                        break;
+                    default:
+                        $error_title = $self->trans('error_unknown_title');
+                        $error_message = $self->trans('error_unknown_message');
+                        break;
+                }
+
+                return $self['twig']->render(
+                    'errors.twig',
+                    [
+                        'error_title' => $error_title,
+                        'error_message' => $error_message,
+                    ]
+                );
+            }
+        );
     }
 
 }
